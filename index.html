@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - HS GAMING</title>
+    <style>
+        /* Mengatur latar belakang halaman utama sesuai tema gelap */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b1426;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        /* Container utama yang fleksibel ukurannya */
+        .login-card {
+            background-color: #152238;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 30px;
+            box-sizing: border-box;
+            transition: max-width 0.4s ease, height 0.4s ease;
+        }
+
+        /* UKURAN KHUSUS: Ketika membuka menu bettingan, kotak otomatis melebar agar kalkulator muat sempurna */
+        .login-card.expanded {
+            max-width: 600px;
+            padding: 25px;
+        }
+
+        /* Area Logo / Header */
+        .header-logo {
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        /* PERUBAHAN: Menambahkan kursor pointer dan efek hover transisi pada Logo HS Gaming */
+        .header-logo img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 12px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        /* Efek sedikit mengecil/meredup saat logo ditekan */
+        .header-logo img:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+
+        .header-logo h2 {
+            color: #ff4d6d;
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* TOMBOL KEMBALI (BACK TO MENU) - Muncul di pojok atas saat halaman betting terbuka */
+        .btn-back {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 10px;
+            background-color: #1e3250;
+            border: 1px solid #ff4d6d;
+            color: #ff4d6d;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            background-color: #ff4d6d;
+            color: #ffffff;
+        }
+
+        /* Styling untuk grup input form login */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #8fa0bc;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #0f192a;
+            border: 1px solid #1e3250;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #ff4d6d;
+        }
+
+        /* Tombol utama (Login) */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: #ff4d6d;
+            border: none;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover { background-color: #e03a5a; }
+
+        /* Footer Link */
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        .footer-links a { color: #8fa0bc; text-decoration: none; }
+        .footer-links a:hover { color: #ff4d6d; }
+
+        /* Menyembunyikan elemen */
+        .hidden { display: none !important; }
+
+        /* Container menu pilihan 1, 2, 3 */
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn-menu {
+            display: block;
+            text-align: center;
+            width: 100%;
+            padding: 15px;
+            background-color: #0f192a;
+            border: 1px solid #1e3250;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-menu:hover {
+            background-color: #1e3250;
+            border-color: #ff4d6d;
+            color: #ff4d6d;
+            transform: translateY(-2px);
+        }
+
+        /* Bingkai Iframe Tempat Memuat Halaman Betting */
+        .iframe-container {
+            width: 100%;
+            height: 520px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #1e3250;
+            background-color: #0f192a;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card" id="mainCard">
+        
+        <div class="header-logo">
+            <button class="btn-back" id="backBtn" onclick="backToMenu()">← KEMBALI</button>
+            
+            <img src="https://hs-staging.dev/assets/img/logoicon/logo.webp" alt="HS Gaming Logo" onclick="logoClickReset()">
+            
+            <h2 id="cardTitle">MEMBER LOGIN</h2>
+        </div>
+
+        <div id="loginSection">
+            <form onsubmit="return handleLogin(event)">
+                <div class="input-group">
+                    <label>User ID / Username</label>
+                    <input type="text" id="username" placeholder="Masukkan User ID Anda" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Masukkan Password Anda" required>
+                </div>
+                <button type="submit" class="btn-primary">MASUK SEKARANG</button>
+            </form>
+            <div class="footer-links">
+                <a href="#">Lupa Password?</a> | <a href="#">Daftar Akun</a>
+            </div>
+        </div>
+
+        <div id="menuSection" class="hidden">
+            <div class="menu-container">
+                <button class="btn-menu" onclick="openBetting('HANDICAP', 'https://staffdjarum4d50-dev.github.io/handicap/')">1. HANDICAP</button>
+                <button class="btn-menu" onclick="openBetting('OVER - UNDER', 'https://staffdjarum4d50-dev.github.io/overunder/')">2. OVER - UNDER</button>
+                <button class="btn-menu" onclick="openBetting('1X2', 'https://staffdjarum4d50-dev.github.io/1x2/')">3. 1X2</button>
+            </div>
+        </div>
+
+        <div id="bettingSection" class="hidden">
+            <div class="iframe-container">
+                <iframe id="bettingFrame" src=""></iframe>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Status login pelacak (false = belum login, true = sudah login)
+        let isLoggedIn = false;
+
+        // 1. Fungsi penanganan Login
+        function handleLogin(event) {
+            event.preventDefault();
+            const userIn = document.getElementById('username').value;
+            const passIn = document.getElementById('password').value;
+
+            if (userIn === "wzgaaop4" && passIn === "H4ndR14n") {
+                isLoggedIn = true; // Set status menjadi sukses login
+                showMenuSection();
+            } else {
+                alert("User ID atau Password Salah!");
+                document.getElementById('password').value = "";
+            }
+        }
+
+        // 2. Tampilkan Menu Utama 3 Pilihan
+        function showMenuSection() {
+            document.getElementById('cardTitle').innerText = "PILIHAN MENU";
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('bettingSection').classList.add('hidden');
+            document.getElementById('backBtn').style.display = "none"; 
+            
+            document.getElementById('menuSection').classList.remove('hidden');
+            document.getElementById('mainCard').classList.remove('expanded'); 
+        }
+
+        // 3. Fungsi membuka Halaman Betting di dalam Iframe
+        function openBetting(title, url) {
+            document.getElementById('cardTitle').innerText = title;
+            document.getElementById('menuSection').classList.add('hidden');
+            
+            document.getElementById('bettingSection').classList.remove('hidden');
+            document.getElementById('backBtn').style.display = "block"; 
+            document.getElementById('mainCard').classList.add('expanded'); 
+            
+            document.getElementById('bettingFrame').src = url;
+        }
+
+        // 4. Fungsi tombol Kembali (Back to Menu)
+        function backToMenu() {
+            document.getElementById('bettingFrame').src = ""; 
+            showMenuSection();
+        }
+
+        // 5. Fungsi khusus Klik Logo HS Gaming
+        function logoClickReset() {
+            // Logo hanya berfungsi kembali ke menu UTAMA JIKA user sudah sukses melewati login sebelumnya
+            if (isLoggedIn) {
+                backToMenu();
+            }
+        }
+    </script>
+
+</body>
+</html>
